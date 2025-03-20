@@ -4,8 +4,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using static Kbg.NppPluginNET.PluginInfrastructure.Win32;
@@ -15,7 +13,6 @@ namespace Kbg.NppPluginNET
     class Main
     {
         #region " Fields "
-        internal const int UNDO_BUFFER_SIZE = 64;
         internal const string PluginName = "CSharpPluginPack";
         public static readonly string PluginConfigDirectory = Path.Combine(Npp.NotepadPP.GetPluginConfigPath(), PluginName);
         public const string PluginRepository = "https://github.com/codingseb/NppCSharpPluginPack";
