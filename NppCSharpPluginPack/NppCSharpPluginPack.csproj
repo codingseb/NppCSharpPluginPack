@@ -94,12 +94,6 @@
     <Compile Include="Forms\AboutForm.Designer.cs">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\PopupDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\PopupDialog.Designer.cs">
-      <DependentUpon>PopupDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\SelectionRememberingForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -170,7 +164,7 @@
     </When>
     <Otherwise>
       <ItemGroup>
-        <DEPENDENCY_DIR Include="Dependencies\$(Platform)" />
+        <DEPENDENCY_DIR Include="Dependencies\x64" />
         <DEPENDENCY_DLLS Include="Dependencies\$(Platform)\*.dll" />
       </ItemGroup>
     </Otherwise>
@@ -184,9 +178,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Net.Http" />
     <!-- third-party dependencies -->
-    <Reference Include="ExampleDependency">
-      <HintPath>@(DEPENDENCY_DIR)\ExampleDependency.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <!-- resx files -->
@@ -196,9 +187,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormBase.resx">
       <DependentUpon>FormBase.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\PopupDialog.resx">
-      <DependentUpon>PopupDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SelectionRememberingForm.resx">
       <DependentUpon>SelectionRememberingForm.cs</DependentUpon>

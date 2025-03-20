@@ -112,9 +112,8 @@ namespace Kbg.NppPluginNET
             PluginBase.SetCommand(17, "Show files opened and closed this session", ShowFilesOpenedAndClosedThisSession);
             PluginBase.SetCommand(18, "Save Current Session Demo", SaveCurrentSessionDemo);
             PluginBase.SetCommand(19, "Print Scroll and Row Information", PrintScrollInformation);
-            PluginBase.SetCommand(20, "Open a pop-up dialog", OpenPopupDialog);
-            PluginBase.SetCommand(21, "---", null);
-            PluginBase.SetCommand(22, "Allocate indicators demo", AllocateIndicatorsDemo);
+            PluginBase.SetCommand(20, "---", null);
+            PluginBase.SetCommand(21, "Allocate indicators demo", AllocateIndicatorsDemo);
             if (FOLLOW_NPP_UI_LANGUAGE && (Npp.nppVersion[0] < 8 || (Npp.nppVersion[0] == 8 && (Npp.nppVersion[1] < 6 || (Npp.nppVersion[1] == 6 && Npp.nppVersion[2] <= 9)))))
             {
                 // start listening to messages that aren't broadcast by the plugin manager (for versions of Notepad++ 8.6.9 or earlier, because later versions have NPPN_NATIVELANGCHANGED)
@@ -716,11 +715,6 @@ You will get a compiler error if you do.";
             aboutForm.Focus();
         }
 
-        static void OpenPopupDialog()
-        {
-            using (var popupForm = new PopupDialog())
-                popupForm.ShowDialog();
-        }
         #endregion
     }
 }   

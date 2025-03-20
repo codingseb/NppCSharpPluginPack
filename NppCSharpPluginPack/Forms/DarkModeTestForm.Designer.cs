@@ -71,7 +71,6 @@
             this.ShowPopupDialogButton.TabIndex = 0;
             this.ShowPopupDialogButton.Text = "Show Pop-up dialog";
             this.ShowPopupDialogButton.UseVisualStyleBackColor = true;
-            this.ShowPopupDialogButton.Click += new System.EventHandler(this.ShowPopupDialogButton_Click);
             // 
             // treeView1
             // 

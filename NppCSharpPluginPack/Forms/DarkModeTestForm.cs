@@ -39,12 +39,6 @@ namespace NppDemo.Forms
             textBox1.Focus();
         }
 
-        private void ShowPopupDialogButton_Click(object sender, System.EventArgs e)
-        {
-            using (var popupDialog = new PopupDialog())
-                popupDialog.ShowDialog();
-        }
-
         private void checkBox1_CheckedChanged(object sender, System.EventArgs e)
         {
             if (!Translator.HasTranslations) // the translator takes care of the CheckedChanged event if it is active
