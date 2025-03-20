@@ -196,7 +196,7 @@ namespace Kbg.NppPluginNET
             Npp.NotepadPP.FileNew();
             string newFileName = Npp.NotepadPP.GetCurrentFilePath();
 
-            Random srand = new Random(DateTime.Now.Millisecond);
+            Random srand = new(DateTime.Now.Millisecond);
             int rangeMin = 0;
             int rangeMax = 250;
             for (int i = 0; i < text2display.Length; i++)

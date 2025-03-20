@@ -9,8 +9,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
     class PluginBase
     {
         internal static NppData nppData;
-        internal static FuncItems _funcItems = new FuncItems();
-        private static List<string> _untranslatedFuncItemNames = new List<string>();
+        internal static FuncItems _funcItems = new();
+        private static List<string> _untranslatedFuncItemNames = new();
         public static List<string> GetUntranslatedFuncItemNames() => _untranslatedFuncItemNames.ToList();
 
         internal static void SetCommand(int index, string commandName, NppFuncItemDelegate functionPointer)
@@ -30,7 +30,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         internal static void SetCommand(int index, string commandName, NppFuncItemDelegate functionPointer, ShortcutKey shortcut, bool checkOnInit)
         {
-            FuncItem funcItem = new FuncItem();
+            FuncItem funcItem = new();
             funcItem._cmdID = index;
             funcItem._itemName = commandName;
             if (functionPointer != null)

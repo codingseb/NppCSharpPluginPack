@@ -1,87 +1,177 @@
 ﻿// NPP plugin platform for .Net v0.94.00 by Kasper B. Graversen etc.
-using NppDemo.PluginInfrastructure;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Kbg.NppPluginNET.PluginInfrastructure
 {
-	public interface INotepadPPGateway
-	{
-		void FileNew();
-
-		void AddToolbarIcon(int funcItemsIndex, toolbarIcons icon);
-		void AddToolbarIcon(int funcItemsIndex, Bitmap icon);
-		string GetNppPath();
-		string GetPluginConfigPath();
-		string GetCurrentFilePath();
-		unsafe string GetFilePath(IntPtr bufferId);
-		void SetCurrentLanguage(LangType language);
-		bool OpenFile(string path);
-		bool SaveCurrentFile();
-		void ShowDockingForm(System.Windows.Forms.Form form);
-		void HideDockingForm(System.Windows.Forms.Form form);
-		Color GetDefaultForegroundColor();
-		Color GetDefaultBackgroundColor();
-		string GetConfigDirectory();
-		int[] GetNppVersion();
-		string[] GetOpenFileNames();
-		void SetStatusBarSection(string message, StatusBarSection section);
-		/// <summary>
-		/// Register a modeless form (i.e., a form that doesn't block the parent application until closed)<br></br>
-		/// with Notepad++ using NPPM_MODELESSDIALOG<br></br>
-		/// If you don't do this, Notepad++ may intercept some keystrokes in unintended ways.
-		/// </summary>
-		/// <param name="formHandle">the Handle attribute of a Windows form</param>
-		void AddModelessDialog(IntPtr formHandle);
-		/// <summary>
-		/// unregister a modelesss form that was registered with AddModelessDialog.<br></br>
-		/// This MUST be called in the Dispose method of the form, BEFORE the components of the form are disposed.
-		/// </summary>
-		/// <param name="formHandle">the Handle attribute of a Windows form</param>
-		void RemoveModelessDialog(IntPtr formHandle);
-        /// <summary>
-		/// Introduced in Notepad++ 8.5.6.<br></br>
-        /// NPPM_ALLOCATEINDICATOR: allocate one or more unused indicator IDs,
-        /// which can then be assigned styles and used to style regions of text.<br></br>
-        /// returns false and sets indicators to null if numberOfIndicators is less than 1, or if the requested number of indicators could not be allocated.<br></br>
-        /// Otherwise, returns true, and sets indicators to an array of numberOfIndicators indicator IDs.<br></br>
-        /// See https://www.scintilla.org/ScintillaDoc.html#Indicators for more info on the indicator API.
-        /// </summary>
-        /// <param name="numberOfIndicators">number of consecutive indicator IDs to allocate</param>
-        /// <returns></returns>
-        bool AllocateIndicators(int numberOfIndicators, out int[] indicators);
-
-        /// <summary>
-        /// get the English name of the Notepad++ UI language.<br></br>
-		/// a return value of false indicates that something went wrong and fname should not be used
-        /// </summary>
-        bool TryGetNativeLangName(out string langName);
-
-		/// <summary>
-		/// returns [0] if only the mainView is open, [0, 1] if both the mainView and subView are open, and [1] if only the subView is open.<br></br>
-		/// Thus, GetVisibleViews().Count will return 2 if the Notepad++ window is split into two views, and 1 otherwise.
-		/// </summary>
-		List<int> GetVisibleViews();
-
-    }
-
 	/// <summary>
 	/// This class holds helpers for sending messages defined in the Msgs_h.cs file. It is at the moment
 	/// incomplete. Please help fill in the blanks.
 	/// </summary>
-	public class NotepadPPGateway : INotepadPPGateway
+	public class NotepadPPGateway
 	{
 		private const int Unused = 0;
 
-		public void FileNew()
-		{
-			Win32.SendMessage(PluginBase.nppData._nppHandle, (uint) NppMsg.NPPM_MENUCOMMAND, Unused, NppMenuCmd.IDM_FILE_NEW);
-		}
+        private IntPtr Send(NppMsg command, int wParam, NppMenuCmd lParam)
+        {
+            return Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)command, wParam, lParam);
+        }
 
-		public void AddToolbarIcon(int funcItemsIndex, toolbarIcons icon)
+        private IntPtr Send(NppMsg command, int wParam, int lParam)
+        {
+            return Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)command, wParam, lParam);
+        }
+
+        private IntPtr Send(NppMsg command, IntPtr wParam, IntPtr lParam)
+        {
+            return Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)command, wParam, lParam);
+        }
+
+        public NotepadPPGateway CallMenuCommand(int nppMenuCmd)
+        {
+            Send(NppMsg.NPPM_MENUCOMMAND, Unused, nppMenuCmd);
+            return this;
+        }
+
+        public NotepadPPGateway FileNew()
+        {
+            Send(NppMsg.NPPM_MENUCOMMAND, Unused, NppMenuCmd.IDM_FILE_NEW);
+            return this;
+        }
+
+        public NotepadPPGateway ReloadFile(string file, bool showAlert)
+        {
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_RELOADFILE, showAlert ? 1 : 0, file);
+            return this;
+        }
+
+        public NotepadPPGateway SaveCurrentFile()
+        {
+            Send(NppMsg.NPPM_SAVECURRENTFILE, Unused, Unused);
+            return this;
+        }
+
+        public NotepadPPGateway SaveAllOpenedDocuments()
+        {
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_SAVEALLFILES, Unused, Unused);
+            return this;
+        }
+
+        /// <summary>
+        /// Gets the path of the current document.
+        /// </summary>
+        public string CurrentFileName
+        {
+            get
+            {
+                StringBuilder path = new(2000);
+                Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETFULLCURRENTPATH, path.Capacity, path);
+                return path.ToString();
+            }
+        }
+
+        public List<string> GetAllOpenedDocuments
+        {
+            get
+            {
+                int count = TabCount;
+
+                List<string> files = new();
+                for (int i = 0; i < count; i++)
+                {
+                    string file = GetTabFileFromPosition(i);
+
+                    if (!string.IsNullOrEmpty(file))
+                        files.Add(file);
+                }
+                return files;
+            }
+        }
+
+        public int GetTabIndex(string tabPath, bool smart = false)
+        {
+            int index = GetAllOpenedDocuments.IndexOf(tabPath);
+
+            if (smart && index < 0)
+                index = GetAllOpenedDocuments.FindIndex(tab => Path.GetFileName(tab).Equals(tabPath));
+
+            if (smart && index < 0)
+                index = GetAllOpenedDocuments.FindIndex(tab => tab.Contains(tabPath));
+
+            return index;
+        }
+
+        public int GetTabIndex(string tabPath)
+        {
+            return GetTabIndex(tabPath, false);
+        }
+
+        public NotepadPPGateway ShowTab(string tabPath, bool smart)
+        {
+            try
+            {
+                ShowTab(GetTabIndex(tabPath, smart));
+            }
+            catch { }
+
+            return this;
+        }
+
+        public NotepadPPGateway ShowTab(string tabPath)
+        {
+            try
+            {
+                ShowTab(GetTabIndex(tabPath));
+            }
+            catch { }
+
+            return this;
+        }
+
+        public NotepadPPGateway ShowTab(int index)
+        {
+            try
+            {
+                Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_ACTIVATEDOC, 0, index);
+            }
+            catch { }
+
+            return this;
+        }
+
+
+        public int TabCount
+        {
+            get
+            {
+                return Send(NppMsg.NPPM_GETNBOPENFILES, Unused, Unused).ToInt32();
+            }
+        }
+
+        public IntPtr GetBufferIdFromTab(int tabIndex)
+        {
+            return Send(NppMsg.NPPM_GETBUFFERIDFROMPOS, tabIndex, 0);
+        }
+
+        public string GetTabFile(IntPtr index)
+        {
+            StringBuilder path = new(2000);
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETFULLPATHFROMBUFFERID, index, path);
+            return path.ToString();
+        }
+
+        public string GetTabFileFromPosition(int tabIndex)
+        {
+            IntPtr id = GetBufferIdFromTab(tabIndex);
+            return GetTabFile(id);
+        }
+
+
+        public void AddToolbarIcon(int funcItemsIndex, toolbarIcons icon)
 		{
 			IntPtr pTbIcons = Marshal.AllocHGlobal(Marshal.SizeOf(icon));
 			try {
@@ -98,9 +188,11 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
 		public void AddToolbarIcon(int funcItemsIndex, Bitmap icon)
 		{
-			var tbi = new toolbarIcons();
-			tbi.hToolbarBmp = icon.GetHbitmap();
-			AddToolbarIcon(funcItemsIndex, tbi);
+            var tbi = new toolbarIcons
+            {
+                hToolbarBmp = icon.GetHbitmap()
+            };
+            AddToolbarIcon(funcItemsIndex, tbi);
 		}
 
 		/// <summary>
@@ -113,15 +205,20 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 			return path.ToString();
 		}
 
-		/// <summary>
-		/// This method incapsulates a common pattern in the Notepad++ API: when
-		/// you need to retrieve a string, you can first query the buffer size.
-		/// This method queries the necessary buffer size, allocates the temporary
-		/// memory, then returns the string retrieved through that buffer.
-		/// </summary>
-		/// <param name="message">Message ID of the data string to query.</param>
-		/// <returns>String returned by Notepad++.</returns>
-		public string GetString(NppMsg message)
+        public void SetPluginMenuChecked(int id, bool check)
+        {
+            Send(NppMsg.NPPM_SETMENUITEMCHECK, PluginBase._funcItems.Items[id]._cmdID, check ? 1 : 0);
+        }
+
+        /// <summary>
+        /// This method incapsulates a common pattern in the Notepad++ API: when
+        /// you need to retrieve a string, you can first query the buffer size.
+        /// This method queries the necessary buffer size, allocates the temporary
+        /// memory, then returns the string retrieved through that buffer.
+        /// </summary>
+        /// <param name="message">Message ID of the data string to query.</param>
+        /// <returns>String returned by Notepad++.</returns>
+        public string GetString(NppMsg message)
 		{
 			int len = Win32.SendMessage(
 					PluginBase.nppData._nppHandle,
@@ -167,17 +264,11 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 			Win32.SendMessage(PluginBase.nppData._nppHandle, (uint) NppMsg.NPPM_SETCURRENTLANGTYPE, Unused, (int) language);
 		}
 
-		/// <summary>
-		/// open a standard save file dialog to save the current file<br></br>
-		/// Returns true if the file was saved
-		/// </summary>
-		public bool SaveCurrentFile()
-		{
-			IntPtr result = Win32.SendMessage(PluginBase.nppData._nppHandle,
-					(uint)(NppMsg.NPPM_SAVECURRENTFILEAS),
-					0, 0);
-			return result.ToInt32() == 1;
-		}
+        public LangType GetCurrentLanguage()
+        {
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETCURRENTLANGTYPE, Unused, out int language);
+            return (LangType)language;
+        }
 
 		public void HideDockingForm(System.Windows.Forms.Form form)
 		{

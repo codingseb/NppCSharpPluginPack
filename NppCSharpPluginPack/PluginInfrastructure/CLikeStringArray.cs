@@ -8,8 +8,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 {
     public class ClikeStringArray : IDisposable
     {
-        IntPtr _nativeArray;
-        List<IntPtr> _nativeItems;
+        private readonly IntPtr _nativeArray;
+        private readonly List<IntPtr> _nativeItems;
         bool _disposed = false;
 
         public ClikeStringArray(int num, int stringCapacity)
@@ -42,7 +42,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public List<string> ManagedStringsUnicode { get { return _getManagedItems(true); } }
         List<string> _getManagedItems(bool unicode)
         {
-            List<string> _managedItems = new List<string>();
+            List<string> _managedItems = new();
             for (int i = 0; i < _nativeItems.Count; i++)
             {
                 if (unicode) _managedItems.Add(Marshal.PtrToStringUni(_nativeItems[i]));

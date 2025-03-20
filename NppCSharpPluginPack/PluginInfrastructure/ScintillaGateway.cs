@@ -115,7 +115,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// <returns>A ScrollInfo struct with information of the current scroll state</returns>
         public ScrollInfo GetScrollInfo(ScrollInfoMask mask = ScrollInfoMask.SIF_ALL, ScrollInfoBar scrollBar = ScrollInfoBar.SB_BOTH)
         {
-            ScrollInfo scrollInfo = new ScrollInfo();
+            ScrollInfo scrollInfo = new();
             scrollInfo.cbSize = (uint)Marshal.SizeOf(scrollInfo);
             scrollInfo.fMask = (uint)mask;
             Win32.GetScrollInfo(scintilla, (int)scrollBar, ref scrollInfo);
