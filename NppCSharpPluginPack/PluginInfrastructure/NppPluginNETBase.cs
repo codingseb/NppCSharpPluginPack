@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using NppDemo.Utils;
 
 namespace Kbg.NppPluginNET.PluginInfrastructure
 {
@@ -33,7 +32,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             FuncItem funcItem = new FuncItem();
             funcItem._cmdID = index;
-            funcItem._itemName = Translator.GetTranslatedMenuItem(commandName);
+            funcItem._itemName = commandName;
             if (functionPointer != null)
                 funcItem._pFunc = new NppFuncItemDelegate(functionPointer);
             if (shortcut._key != 0)

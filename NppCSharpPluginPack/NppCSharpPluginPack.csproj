@@ -81,32 +81,8 @@
   </ItemGroup>
   <ItemGroup>
     <!-- forms -->
-    <Compile Include="Forms\FormBase.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FormBase.Designer.cs">
-      <DependentUpon>FormBase.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\NppFormHelper.cs" />
-    <Compile Include="Forms\AboutForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\AboutForm.Designer.cs">
-      <DependentUpon>AboutForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\SelectionRememberingForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\SelectionRememberingForm.Designer.cs">
-      <DependentUpon>SelectionRememberingForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\DarkModeTestForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\DarkModeTestForm.Designer.cs">
-      <DependentUpon>DarkModeTestForm.cs</DependentUpon>
-    </Compile>
     <!-- infrastructure -->
+    <Compile Include="Npp.cs" />
     <Compile Include="PluginInfrastructure\CLikeStringArray.cs" />
     <Compile Include="PluginInfrastructure\DllExport\DllExportAttribute.cs" />
     <Compile Include="PluginInfrastructure\Docking_h.cs" />
@@ -120,39 +96,16 @@
     <Compile Include="PluginInfrastructure\Preference_h.cs" />
     <Compile Include="PluginInfrastructure\ScintillaGateway.cs" />
     <Compile Include="PluginInfrastructure\Scintilla_iface.cs" />
-    <Compile Include="PluginInfrastructure\SettingsBase.cs" />
     <Compile Include="PluginInfrastructure\UnmanagedExports.cs" />
     <Compile Include="PluginInfrastructure\Win32.cs" />
     <Compile Include="PluginInfrastructure\resource_h.cs" />
     <!-- designers -->
-    <Compile Include="Properties\Resources.Designer.cs">
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <!-- other code -->
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources1.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <!-- tests -->
-    <Compile Include="Tests\Benchmarker.cs" />
-    <Compile Include="Tests\SliceTests.cs" />
-    <Compile Include="Tests\UserInterfaceTests.cs" />
-    <Compile Include="Tests\TestRunner.cs" />
     <!-- other utilities -->
-    <Compile Include="Utils\FormStyle.cs" />
-    <Compile Include="Utils\ArrayExtensions.cs" />
-    <Compile Include="Utils\Npp.cs" />
-    <Compile Include="Utils\NanInf.cs" />
-    <Compile Include="Utils\NppListener.cs" />
-    <Compile Include="Utils\SelectionManager.cs" />
-    <Compile Include="Utils\Settings.cs" />
-    <Compile Include="Utils\Translator.cs" />
     <!-- JSON parsing (for translation to other languages) -->
-    <Compile Include="JSON_Tools\JNode.cs" />
-    <Compile Include="JSON_Tools\JsonParser.cs" />
   </ItemGroup>
   <Choose>
     <!-- where should we look for dependency assemblies? -->
@@ -164,7 +117,6 @@
     </When>
     <Otherwise>
       <ItemGroup>
-        <DEPENDENCY_DIR Include="Dependencies\x64" />
         <DEPENDENCY_DLLS Include="Dependencies\$(Platform)\*.dll" />
       </ItemGroup>
     </Otherwise>
@@ -178,41 +130,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Net.Http" />
     <!-- third-party dependencies -->
-  </ItemGroup>
-  <ItemGroup>
-    <!-- resx files -->
-    <EmbeddedResource Include="Forms\AboutForm.resx">
-      <DependentUpon>AboutForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormBase.resx">
-      <DependentUpon>FormBase.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\SelectionRememberingForm.resx">
-      <DependentUpon>SelectionRememberingForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\DarkModeTestForm.resx">
-      <DependentUpon>DarkModeTestForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <SubType>Designer</SubType>
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources1.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <!-- icons and such -->
-    <Content Include="Properties\star_bmp.bmp" />
-    <None Include="Resources\close html tag toolbar darkmode.ico" />
-    <None Include="Resources\close html tag toolbar.ico" />
-    <None Include="Resources\close html tag toolbar bmp.bmp" />
-    <None Include="Resources\about form toolbar darkmode.ico" />
-    <None Include="Resources\selection remembering form toolbar darkmode.ico" />
-    <None Include="Resources\about form toolbar.ico" />
-    <None Include="Resources\selection remembering form toolbar.ico" />
-    <None Include="Resources\about form toolbar bmp.bmp" />
-    <None Include="Resources\selection remembering form toolbar bmp.bmp" />
-    <None Include="Resources\about form icon.PNG" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

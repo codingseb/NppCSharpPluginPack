@@ -62,19 +62,29 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
     /// </summary>
     public class Position : IEquatable<Position>
     {
-        private readonly Int64 pos;
+        private readonly int pos;
 
-        public Position(IntPtr ptr) : this(ptr.ToInt64())
+        public Position(IntPtr ptr) : this(ptr.ToInt32())
         { }
 
-        public Position(Int64 pos)
+        public Position(int pos)
         {
             this.pos = pos;
         }
 
-        public Int64 Value
+        public int Value
         {
             get { return pos; }
+        }
+
+        public static implicit operator Position(int pos)
+        {
+            return new Position(pos);
+        }
+
+        public static implicit operator int(Position pos)
+        {
+            return pos.Value;
         }
 
         public static Position operator +(Position a, Position b)

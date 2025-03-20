@@ -1,11 +1,10 @@
 ﻿// NPP plugin platform for .Net v0.94.00 by Kasper B. Graversen etc.
+using NppDemo.PluginInfrastructure;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
-using NppDemo.PluginInfrastructure;
-using NppDemo.Utils;
 
 namespace Kbg.NppPluginNET.PluginInfrastructure
 {
@@ -246,7 +245,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
                 for (int ii = 0; ii < nbOpenFiles; ii++)
                 {
                     IntPtr bufId = Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETBUFFERIDFROMPOS, ii, view);
-                    bufs.Add(Npp.notepad.GetFilePath(bufId));
+                    bufs.Add(Npp.NotepadPP.GetFilePath(bufId));
                 }
             }
             return bufs.ToArray();
